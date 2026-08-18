@@ -4,201 +4,624 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Refresh / Content Opportunity Scoring</title>
+    <title>Refresh / Content Opportunity Scoring | Search Intelligence</title>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        body {
-            margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
-            line-height: 1.7;
-            background: #f6f7fb;
-            color: #202124;
+        :root {
+            --bg: #f5f7fb;
+            --card: #ffffff;
+            --text: #18202a;
+            --muted: #667085;
+            --border: #e5e7eb;
+            --accent: #5b5bd6;
+            --accent-light: #eeeeff;
+            --dark: #111827;
+            --success: #15803d;
+            --warning: #b45309;
+            --danger: #b91c1c;
         }
 
-        .container {
-            max-width: 950px;
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Arial,
+                sans-serif;
+            line-height: 1.7;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        /* -----------------------------
+           NAVIGATION
+        ----------------------------- */
+
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-inner {
+            max-width: 1100px;
             margin: auto;
-            padding: 40px 25px;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            font-weight: 800;
+            color: var(--dark);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        /* -----------------------------
+           MAIN LAYOUT
+        ----------------------------- */
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 45px 20px;
         }
 
         header {
-            background: #ffffff;
-            padding: 55px 40px;
-            border-radius: 18px;
+            background:
+                linear-gradient(
+                    135deg,
+                    #ffffff 0%,
+                    #f1f1ff 100%
+                );
+
+            padding: 65px 50px;
+            border-radius: 24px;
             margin-bottom: 30px;
-            box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+
+            border: 1px solid var(--border);
+
+            box-shadow:
+                0 12px 40px rgba(0,0,0,0.06);
+        }
+
+        .eyebrow {
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--accent);
+            margin-bottom: 15px;
         }
 
         h1 {
-            font-size: 42px;
-            line-height: 1.2;
-            margin-bottom: 15px;
+            font-size: clamp(34px, 6vw, 58px);
+            line-height: 1.08;
+            margin: 0 0 20px;
+            letter-spacing: -1.5px;
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: var(--muted);
+            max-width: 800px;
+        }
+
+        section {
+            background: var(--card);
+            padding: 38px;
+            margin-bottom: 25px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+
+            box-shadow:
+                0 5px 20px rgba(0,0,0,0.035);
         }
 
         h2 {
             margin-top: 0;
-            font-size: 28px;
+            font-size: 29px;
+            letter-spacing: -0.5px;
         }
 
         h3 {
             margin-top: 30px;
         }
 
-        section {
-            background: white;
-            padding: 35px;
-            margin-bottom: 25px;
-            border-radius: 16px;
-            box-shadow: 0 3px 14px rgba(0,0,0,0.05);
+        p {
+            color: #3f4752;
         }
 
-        .subtitle {
-            font-size: 19px;
-            color: #666;
+        /* -----------------------------
+           HERO STATS
+        ----------------------------- */
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(190px, 1fr));
+
+            gap: 15px;
+            margin-top: 30px;
         }
+
+        .stat {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid var(--border);
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 25px;
+            font-weight: 800;
+        }
+
+        /* -----------------------------
+           HIGHLIGHTS
+        ----------------------------- */
 
         .highlight {
-            padding: 20px;
-            background: #f0f2f7;
+            padding: 22px;
+            background: var(--accent-light);
+            border-left: 4px solid var(--accent);
             border-radius: 12px;
-            margin: 20px 0;
+            margin: 22px 0;
         }
+
+        .warning {
+            padding: 20px;
+            background: #fff7ed;
+            border-left: 4px solid var(--warning);
+            border-radius: 12px;
+            margin: 22px 0;
+        }
+
+        /* -----------------------------
+           METRIC CARDS
+        ----------------------------- */
 
         .metric-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
+            grid-template-columns:
+                repeat(auto-fit, minmax(220px, 1fr));
+
+            gap: 16px;
             margin: 25px 0;
         }
 
         .metric {
-            padding: 20px;
-            background: #f5f6fa;
-            border-radius: 12px;
+            padding: 22px;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            background: #fafafa;
         }
 
         .metric strong {
             display: block;
-            font-size: 24px;
-            margin-bottom: 5px;
+            font-size: 28px;
+            margin-bottom: 3px;
+        }
+
+        .metric span {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        /* -----------------------------
+           CHARTS
+        ----------------------------- */
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 380px;
+            margin-top: 25px;
+        }
+
+        /* -----------------------------
+           TABLE
+        ----------------------------- */
+
+        .table-wrapper {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 14px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 20px 0;
+            min-width: 750px;
         }
 
-        th, td {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
+        th,
+        td {
+            padding: 13px 15px;
+            border-bottom: 1px solid var(--border);
             text-align: left;
         }
 
         th {
-            background: #f1f2f6;
+            background: #f8f9fb;
+            cursor: pointer;
+            user-select: none;
+            font-size: 13px;
         }
 
-        code {
-            background: #f0f1f4;
-            padding: 3px 6px;
-            border-radius: 5px;
+        th:hover {
+            background: #eef0f5;
         }
+
+        tr:hover td {
+            background: #fafaff;
+        }
+
+        .rank {
+            font-weight: 800;
+        }
+
+        .score {
+            font-weight: 700;
+        }
+
+        /* -----------------------------
+           BADGES
+        ----------------------------- */
+
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            background: #eef0f4;
+        }
+
+        .review {
+            background: #fee2e2;
+            color: var(--danger);
+        }
+
+        .monitor {
+            background: #dcfce7;
+            color: var(--success);
+        }
+
+        /* -----------------------------
+           FILTERS
+        ----------------------------- */
+
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .filters input,
+        .filters select {
+            padding: 11px 13px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: white;
+            font-size: 14px;
+        }
+
+        .filters input {
+            min-width: 250px;
+        }
+
+        /* -----------------------------
+           COLLAPSIBLE
+        ----------------------------- */
+
+        details {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin: 12px 0;
+            padding: 15px 18px;
+        }
+
+        summary {
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        /* -----------------------------
+           BUTTON
+        ----------------------------- */
+
+        .button {
+            display: inline-block;
+            padding: 11px 17px;
+            background: var(--dark);
+            color: white;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .button:hover {
+            opacity: 0.9;
+        }
+
+        /* -----------------------------
+           FOOTER
+        ----------------------------- */
 
         footer {
             text-align: center;
-            color: #666;
-            padding: 30px;
+            color: var(--muted);
+            padding: 35px 20px 50px;
         }
 
-        a {
-            color: #333;
+        footer a {
+            color: var(--accent);
         }
 
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 32px;
+        /* -----------------------------
+           MOBILE
+        ----------------------------- */
+
+        @media (max-width: 700px) {
+
+            .nav-inner {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 8px;
             }
 
-            section, header {
+            .nav-links {
+                gap: 10px;
+            }
+
+            header {
+                padding: 40px 25px;
+            }
+
+            section {
                 padding: 25px;
+            }
+
+            .chart-container {
+                height: 300px;
+            }
+
+            .filters input {
+                width: 100%;
+                min-width: 0;
             }
         }
     </style>
 </head>
 
+
 <body>
+
+
+<!-- =====================================
+     NAVIGATION
+===================================== -->
+
+<nav>
+    <div class="nav-inner">
+
+        <a class="brand" href="#">
+            Search Intelligence Research
+        </a>
+
+        <div class="nav-links">
+            <a href="#introduction">Problem</a>
+            <a href="#data">Data</a>
+            <a href="#methodology">Method</a>
+            <a href="#results">Results</a>
+            <a href="#recommendations">Recommendations</a>
+            <a href="#reproducibility">Reproducibility</a>
+        </div>
+
+    </div>
+</nav>
+
 
 <div class="container">
 
+
+<!-- =====================================
+     HERO
+===================================== -->
+
 <header>
-    <h1>Refresh / Content Opportunity Scoring</h1>
+
+    <div class="eyebrow">
+        FlyRank ML Internship · Search Intelligence
+    </div>
+
+    <h1>
+        Refresh / Content Opportunity Scoring
+    </h1>
 
     <p class="subtitle">
-        A Search Intelligence approach for prioritizing content review
-        using observed search, visibility, click, and engagement signals.
+        A repeatable decision-support workflow for prioritizing
+        content review using observed search, visibility, click,
+        and engagement signals.
     </p>
 
+
     <div class="highlight">
+
         <strong>Research question:</strong>
+
         Which content items should be prioritized for human review
         when a content team has more pages than it can inspect at once?
+
     </div>
+
+
+    <div class="hero-stats">
+
+        <div class="stat">
+            <div class="stat-label">
+                Capstone Lane
+            </div>
+
+            <div class="stat-value">
+                Content Opportunity
+            </div>
+        </div>
+
+
+        <div class="stat">
+            <div class="stat-label">
+                Modeling Task
+            </div>
+
+            <div class="stat-value">
+                Regression
+            </div>
+        </div>
+
+
+        <div class="stat">
+            <div class="stat-label">
+                Validation
+            </div>
+
+            <div class="stat-value">
+                Client Grouped
+            </div>
+        </div>
+
+
+        <div class="stat">
+            <div class="stat-label">
+                Output
+            </div>
+
+            <div class="stat-value">
+                Ranked Queue
+            </div>
+        </div>
+
+    </div>
+
 </header>
 
 
-<section>
-    <h2>Abstract</h2>
+<!-- =====================================
+     ABSTRACT
+===================================== -->
+
+<section id="abstract">
+
+    <h2>
+        Abstract
+    </h2>
 
     <p>
-        This project asks which content items should be prioritized for
-        human review when a content team has more pages than it can
-        refresh at once. I use FlyRank search intelligence data to build
-        a repeatable ranking workflow based on observed search, click,
-        position, and engagement signals. The workflow first establishes
-        a transparent baseline action score and then compares it with a
-        Random Forest regression model for <code>trend_pct</code>, using
-        a client-grouped holdout split and explicit leakage checks.
-        The model and baseline are evaluated on the same held-out content,
-        with the results generated directly from the dataset.
-        The final output is a ranked review queue with reason codes
-        intended as decision-support rather than proof of causality or
-        guaranteed refresh impact.
+        This project asks which content items should be prioritized
+        for human review when a content team has more pages than it
+        can refresh at once. I use FlyRank search intelligence data
+        to build a repeatable ranking workflow based on observed
+        search, click, position, and engagement signals. The workflow
+        first establishes a transparent baseline action score and
+        then compares it with a Random Forest regression model for
+        <code>trend_pct</code>, using a client-grouped holdout split
+        and explicit leakage checks. The model and baseline are
+        evaluated on the same held-out content using regression
+        error and ranking alignment. The final output is a ranked
+        review queue with reason codes intended as decision-support
+        rather than proof of causality or guaranteed refresh impact.
     </p>
+
 </section>
 
 
-<section>
-    <h2>1. Introduction / Problem Statement</h2>
+<!-- =====================================
+     1. INTRODUCTION
+===================================== -->
+
+<section id="introduction">
+
+    <h2>
+        1. Introduction / Problem Statement
+    </h2>
 
     <p>
-        Content teams often have more pages available for review than
-        they can reasonably inspect or refresh at one time. This creates
-        a prioritization problem: which content should be examined first?
+        Content teams often have more pages available for review
+        than they can reasonably inspect or refresh at one time.
+        This creates a prioritization problem: which content should
+        be examined first?
     </p>
 
     <p>
-        The purpose of this project is to create a repeatable,
-        evidence-based way to prioritize content review using available
-        Search Intelligence signals.
-    </p>
-
-    <p>
-        The project belongs to the
-        <strong>Refresh / Content Opportunity Scoring</strong> lane.
+        This project creates a repeatable, evidence-based approach
+        for prioritizing content review using available Search
+        Intelligence signals.
     </p>
 
     <div class="highlight">
+
         <strong>Decision supported:</strong>
-        The system recommends which content items deserve human review
-        first. It does not automatically recommend that a page must be
+
+        The system identifies content items that deserve human review
+        first. It does not automatically decide that a page must be
         refreshed.
+
     </div>
+
 </section>
 
 
-<section>
-    <h2>2. Data</h2>
+<!-- =====================================
+     2. DATA
+===================================== -->
+
+<section id="data">
+
+    <h2>
+        2. Data
+    </h2>
 
     <p>
         The analysis uses the FlyRank ML Internship Search Intelligence
@@ -208,257 +631,764 @@
         trend movement.
     </p>
 
-    <h3>Unit of analysis</h3>
+
+    <h3>
+        Unit of analysis
+    </h3>
 
     <p>
         One row represents one content item identified by
         <code>content_id</code>.
     </p>
 
-    <h3>Target</h3>
+
+    <h3>
+        Target
+    </h3>
 
     <p>
         The modeling target is <code>trend_pct</code>, a continuous
         observed trend measure available in the dataset.
     </p>
 
-    <h3>Excluded fields</h3>
 
-    <ul>
-        <li><code>content_id</code> — identifier only.</li>
-        <li><code>client_id</code> — used for grouped validation, not prediction.</li>
-        <li><code>trend_pct</code> — the modeling target.</li>
-        <li><code>trend_direction</code> — target-derived and therefore a leakage risk.</li>
-        <li>Tier/bucket fields — excluded where they duplicate underlying numeric measurements.</li>
-    </ul>
+    <details>
 
-    <p>
-        No client names, domains, private queries, credentials, or raw
-        private exports are included in this public research presentation.
-    </p>
-</section>
+        <summary>
+            View excluded fields
+        </summary>
 
+        <ul>
 
-<section>
-    <h2>3. Methodology</h2>
+            <li>
+                <code>content_id</code> — identifier only.
+            </li>
 
-    <h3>Baseline</h3>
+            <li>
+                <code>client_id</code> — used for grouped validation,
+                not prediction.
+            </li>
 
-    <p>
-        A transparent baseline action score combines four observed
-        signals:
-    </p>
+            <li>
+                <code>trend_pct</code> — modeling target.
+            </li>
 
-    <ul>
-        <li>Low CTR — 30%</li>
-        <li>Poor average position — 30%</li>
-        <li>Low engagement — 25%</li>
-        <li>High search demand — 15%</li>
-    </ul>
+            <li>
+                <code>trend_direction</code> — target-derived and
+                therefore a leakage risk.
+            </li>
 
-    <p>
-        A higher score means that the content item receives higher
-        priority for human review.
-    </p>
+            <li>
+                Tier/bucket fields — excluded where they duplicate
+                underlying numeric measurements.
+            </li>
 
-    <h3>Machine-learning model</h3>
+        </ul>
 
-    <p>
-        A Random Forest Regressor is used to model the continuous
-        <code>trend_pct</code> target. Numeric features are median
-        imputed, while categorical features are imputed and
-        one-hot encoded.
-    </p>
-
-    <h3>Validation</h3>
-
-    <p>
-        The dataset is divided using an 80/20 client-grouped holdout.
-        This prevents the same client from appearing in both training
-        and testing data.
-    </p>
-
-    <p>
-        The baseline and machine-learning model are evaluated on the
-        same held-out test set.
-    </p>
-
-    <h3>Leakage control</h3>
-
-    <p>
-        Target-derived fields, identifiers, and excluded bucket fields
-        are not used as predictive features. This helps prevent the model
-        from learning information that would not be appropriate as an
-        input signal.
-    </p>
-</section>
+    </details>
 
 
-<section>
-    <h2>4. Results</h2>
+    <div class="warning">
 
-    <p>
-        The model and baseline are evaluated on the same held-out data.
-        The model uses MAE and RMSE for regression performance, while
-        ranking alignment is assessed using Spearman correlation.
-    </p>
+        <strong>Public-safety rule:</strong>
 
-    <div class="highlight">
-        <strong>Important:</strong>
-        The numerical results shown in the final published paper should
-        be copied from the actual outputs generated by the capstone
-        notebook rather than manually invented.
+        No client names, private queries, credentials, domains,
+        private URLs, or raw private exports are included.
+
     </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Method</th>
-                <th>Priority Spearman</th>
-                <th>MAE</th>
-                <th>RMSE</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            <tr>
-                <td>Week-4 Baseline</td>
-                <td>INSERT NOTEBOOK RESULT</td>
-                <td>—</td>
-                <td>—</td>
-            </tr>
-
-            <tr>
-                <td>Random Forest</td>
-                <td>INSERT NOTEBOOK RESULT</td>
-                <td>INSERT NOTEBOOK RESULT</td>
-                <td>INSERT NOTEBOOK RESULT</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <p>
-        The results should be interpreted as observed performance on the
-        defined holdout sample. They should not be interpreted as proof
-        that a content refresh will cause improved search performance.
-    </p>
 </section>
 
 
-<section>
-    <h2>5. Limitations & Honest Framing</h2>
+<!-- =====================================
+     3. METHODOLOGY
+===================================== -->
+
+<section id="methodology">
+
+    <h2>
+        3. Methodology
+    </h2>
+
+
+    <details open>
+
+        <summary>
+            Baseline action score
+        </summary>
+
+        <p>
+            The transparent baseline combines four observed signals:
+        </p>
+
+        <ul>
+            <li>Low CTR — 30%</li>
+            <li>Poor average position — 30%</li>
+            <li>Low engagement — 25%</li>
+            <li>High search demand — 15%</li>
+        </ul>
+
+        <p>
+            A higher score means higher priority for human review.
+        </p>
+
+    </details>
+
+
+    <details>
+
+        <summary>
+            Random Forest model
+        </summary>
+
+        <p>
+            A Random Forest Regressor is used to model the continuous
+            <code>trend_pct</code> target.
+        </p>
+
+        <p>
+            Numeric features are median-imputed. Categorical features
+            are imputed and one-hot encoded.
+        </p>
+
+    </details>
+
+
+    <details>
+
+        <summary>
+            Validation design
+        </summary>
+
+        <p>
+            The data uses an 80/20 client-grouped holdout split.
+            The same client cannot appear in both training and test
+            groups.
+        </p>
+
+    </details>
+
+
+    <details>
+
+        <summary>
+            Leakage controls
+        </summary>
+
+        <p>
+            Target-derived fields, identifiers, and excluded tier
+            fields are not used as predictive features.
+        </p>
+
+    </details>
+
+</section>
+
+
+<!-- =====================================
+     4. RESULTS
+===================================== -->
+
+<section id="results">
+
+    <h2>
+        4. Results
+    </h2>
 
     <p>
-        This analysis uses observational data. It can identify
-        associations and directional patterns but cannot establish that
-        changing a page will cause a particular change in search
-        performance.
+        The baseline and model are evaluated on the same held-out
+        test data.
     </p>
 
-    <p>
-        The model is also limited by the variables available in the
-        dataset. Editorial quality, competitive changes, seasonality,
-        business context, and other external factors may not be fully
-        represented.
-    </p>
 
-    <p>
-        Client-grouped validation reduces client leakage but does not
-        transform the analysis into a causal experiment.
-    </p>
+    <!-- IMPORTANT:
+         Replace these values with your actual
+         notebook outputs.
+    -->
 
-    <p>
-        The final recommendation should therefore be interpreted as a
-        <strong>human-review priority</strong>, not an automatic refresh
-        instruction or guarantee of future performance.
-    </p>
+    <div class="metric-grid">
+
+        <div class="metric">
+
+            <strong id="baselineSpearman">
+                INSERT
+            </strong>
+
+            <span>
+                Baseline Priority Spearman
+            </span>
+
+        </div>
+
+
+        <div class="metric">
+
+            <strong id="modelSpearman">
+                INSERT
+            </strong>
+
+            <span>
+                Model Priority Spearman
+            </span>
+
+        </div>
+
+
+        <div class="metric">
+
+            <strong id="modelMAE">
+                INSERT
+            </strong>
+
+            <span>
+                Model MAE
+            </span>
+
+        </div>
+
+
+        <div class="metric">
+
+            <strong id="modelRMSE">
+                INSERT
+            </strong>
+
+            <span>
+                Model RMSE
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="chart-container">
+
+        <canvas id="comparisonChart"></canvas>
+
+    </div>
+
+
+    <h3>
+        Model vs baseline
+    </h3>
+
+
+    <div class="table-wrapper">
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>Method</th>
+                    <th>Priority Spearman</th>
+                    <th>MAE</th>
+                    <th>RMSE</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>Week-4 Baseline</td>
+                    <td>INSERT</td>
+                    <td>—</td>
+                    <td>—</td>
+                </tr>
+
+                <tr>
+                    <td>Random Forest</td>
+                    <td>INSERT</td>
+                    <td>INSERT</td>
+                    <td>INSERT</td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
 
     <div class="highlight">
-        <strong>Framing:</strong>
+
+        <strong>Interpretation:</strong>
+
+        The results describe observed performance on the defined
+        holdout sample. They should not be interpreted as proof that
+        refreshing a page will cause improved search performance.
+
+    </div>
+
+</section>
+
+
+<!-- =====================================
+     5. LIMITATIONS
+===================================== -->
+
+<section id="limitations">
+
+    <h2>
+        5. Limitations & Honest Framing
+    </h2>
+
+
+    <details open>
+
+        <summary>
+            Observational data
+        </summary>
+
+        <p>
+            The dataset is observational. The analysis can identify
+            associations and directional patterns but cannot establish
+            that changing a page causes a particular change in search
+            performance.
+        </p>
+
+    </details>
+
+
+    <details>
+
+        <summary>
+            Missing business context
+        </summary>
+
+        <p>
+            Editorial quality, competitive changes, seasonality,
+            business priorities, and other external factors may not
+            be represented.
+        </p>
+
+    </details>
+
+
+    <details>
+
+        <summary>
+            Validation limitation
+        </summary>
+
+        <p>
+            Client-grouped validation reduces client leakage but does
+            not make this a causal experiment.
+        </p>
+
+    </details>
+
+
+    <div class="warning">
+
+        <strong>
+            Honest framing:
+        </strong>
+
         observed · measured · directional · decision-support
+
     </div>
+
 </section>
 
 
-<section>
-    <h2>6. Ranked Recommendations</h2>
+<!-- =====================================
+     6. RECOMMENDATIONS
+===================================== -->
+
+<section id="recommendations">
+
+    <h2>
+        6. Ranked Recommendations
+    </h2>
 
     <p>
-        The final output is a ranked content-review queue. Each item is
-        assigned an action score and reason code so that the priority
-        is interpretable.
+        The final output is a ranked content-review queue.
+        Use the controls below to search and filter the recommendations.
     </p>
 
-    <h3>Recommendation logic</h3>
+
+    <!-- SEARCH + FILTER -->
+
+    <div class="filters">
+
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Search content ID..."
+            onkeyup="filterTable()"
+        >
+
+
+        <select
+            id="reasonFilter"
+            onchange="filterTable()"
+        >
+
+            <option value="">
+                All reason codes
+            </option>
+
+            <option value="LOW_CTR">
+                LOW_CTR
+            </option>
+
+            <option value="POOR_POSITION">
+                POOR_POSITION
+            </option>
+
+            <option value="LOW_ENGAGEMENT">
+                LOW_ENGAGEMENT
+            </option>
+
+            <option value="HIGH_DEMAND">
+                HIGH_DEMAND
+            </option>
+
+            <option value="MULTI_SIGNAL">
+                MULTI_SIGNAL
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <!-- TOP 20 TABLE -->
+
+    <div class="table-wrapper">
+
+        <table id="recommendationTable">
+
+            <thead>
+
+                <tr>
+
+                    <th onclick="sortTable(0)">
+                        Rank ↕
+                    </th>
+
+                    <th onclick="sortTable(1)">
+                        Content ID ↕
+                    </th>
+
+                    <th onclick="sortTable(2)">
+                        Action ↕
+                    </th>
+
+                    <th onclick="sortTable(3)">
+                        Score ↕
+                    </th>
+
+                    <th onclick="sortTable(4)">
+                        Reason Code ↕
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                <!--
+                    REPLACE THESE EXAMPLE ROWS
+                    WITH YOUR REAL TOP-20 OUTPUT.
+                -->
+
+                <tr>
+
+                    <td class="rank">
+                        1
+                    </td>
+
+                    <td>
+                        content_example_001
+                    </td>
+
+                    <td>
+                        <span class="badge review">
+                            REVIEW
+                        </span>
+                    </td>
+
+                    <td class="score">
+                        0.92
+                    </td>
+
+                    <td>
+                        MULTI_SIGNAL
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <td class="rank">
+                        2
+                    </td>
+
+                    <td>
+                        content_example_002
+                    </td>
+
+                    <td>
+                        <span class="badge review">
+                            REVIEW
+                        </span>
+                    </td>
+
+                    <td class="score">
+                        0.88
+                    </td>
+
+                    <td>
+                        LOW_CTR
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <td class="rank">
+                        3
+                    </td>
+
+                    <td>
+                        content_example_003
+                    </td>
+
+                    <td>
+                        <span class="badge review">
+                            REVIEW
+                        </span>
+                    </td>
+
+                    <td class="score">
+                        0.84
+                    </td>
+
+                    <td>
+                        POOR_POSITION
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <h3>
+        Recommendation logic
+    </h3>
+
+
+    <div class="metric-grid">
+
+        <div class="metric">
+
+            <strong>
+                LOW_CTR
+            </strong>
+
+            <span>
+                Observed lower click-through signal
+            </span>
+
+        </div>
+
+
+        <div class="metric">
+
+            <strong>
+                POOR_POSITION
+            </strong>
+
+            <span>
+                Observed weaker search position
+            </span>
+
+        </div>
+
+
+        <div class="metric">
+
+            <strong>
+                LOW_ENGAGEMENT
+            </strong>
+
+            <span>
+                Observed lower engagement
+            </span>
+
+        </div>
+
+
+        <div class="metric">
+
+            <strong>
+                HIGH_DEMAND
+            </strong>
+
+            <span>
+                Observed higher search demand
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="chart-container">
+
+        <canvas id="recommendationChart"></canvas>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================
+     7. ARTIFACTS
+===================================== -->
+
+<section id="artifacts">
+
+    <h2>
+        7. Artifacts
+    </h2>
+
+    <p>
+        The analysis produces several artifacts designed to make the
+        workflow inspectable and useful to a content team.
+    </p>
+
 
     <ul>
-        <li><strong>LOW_CTR:</strong> observed low click-through signal.</li>
-        <li><strong>POOR_POSITION:</strong> observed weaker search position.</li>
-        <li><strong>LOW_ENGAGEMENT:</strong> observed lower engagement.</li>
-        <li><strong>HIGH_DEMAND:</strong> observed higher search demand.</li>
-        <li><strong>MULTI_SIGNAL:</strong> multiple signals contribute to the priority.</li>
+
+        <li>
+            Model-versus-baseline comparison
+        </li>
+
+        <li>
+            Priority ranking comparison
+        </li>
+
+        <li>
+            Top-20 recommendation queue
+        </li>
+
+        <li>
+            Random Forest feature importance
+        </li>
+
+        <li>
+            Largest prediction-error analysis
+        </li>
+
     </ul>
 
-    <div class="highlight">
-        The Top-20 recommendation table should be inserted from
-        <code>capstone_ranked_recommendations.csv</code> generated by
-        the notebook.
-    </div>
+
+    <details>
+
+        <summary>
+            Why these artifacts?
+        </summary>
+
+        <p>
+            The goal is not to create a large collection of charts.
+            Each artifact should answer a practical question:
+            how well does the approach perform, why were items
+            prioritized, and where does the model appear uncertain
+            or wrong?
+        </p>
+
+    </details>
+
 </section>
 
 
-<section>
-    <h2>7. Artifacts</h2>
+<!-- =====================================
+     8. REPRODUCIBILITY
+===================================== -->
 
-    <p>
-        The supporting artifacts for the research include:
-    </p>
+<section id="reproducibility">
 
-    <ul>
-        <li>Model-versus-baseline comparison</li>
-        <li>Priority ranking comparison</li>
-        <li>Top-20 recommendation queue</li>
-        <li>Random Forest feature importance</li>
-        <li>Largest prediction-error analysis</li>
-    </ul>
-
-    <p>
-        These artifacts provide evidence for the methodology, results,
-        and recommendations while avoiding exposure of private client
-        information.
-    </p>
-</section>
-
-
-<section>
-    <h2>8. Reproducibility</h2>
+    <h2>
+        8. Reproducibility
+    </h2>
 
     <p>
         The project is organized as a sequence of weekly notebooks
-        covering the data contract, leakage checks, signal audit,
+        covering data-contract design, leakage checks, signal audit,
         baseline scoring, model training, and final capstone analysis.
     </p>
 
+
     <ol>
-        <li>Define the unit of analysis and target.</li>
-        <li>Identify excluded and leakage-prone fields.</li>
-        <li>Audit candidate signals.</li>
-        <li>Build the transparent baseline.</li>
-        <li>Split data by client.</li>
-        <li>Train the Random Forest model.</li>
-        <li>Evaluate model and baseline on the same test set.</li>
-        <li>Generate the ranked recommendation queue.</li>
+
+        <li>
+            Define the unit of analysis and target.
+        </li>
+
+        <li>
+            Identify excluded and leakage-prone fields.
+        </li>
+
+        <li>
+            Audit candidate signals.
+        </li>
+
+        <li>
+            Build the transparent baseline.
+        </li>
+
+        <li>
+            Split data by client.
+        </li>
+
+        <li>
+            Train the Random Forest model.
+        </li>
+
+        <li>
+            Evaluate model and baseline on the same test set.
+        </li>
+
+        <li>
+            Generate the ranked recommendation queue.
+        </li>
+
     </ol>
 
-    <p>
-        The corresponding notebooks and generated outputs are maintained
-        in the project repository.
-    </p>
+
+    <a
+        class="button"
+        href="https://github.com/"
+        target="_blank"
+    >
+        View Project Repository
+    </a>
+
 </section>
 
 
-<section>
-    <h2>9. Acknowledgments & Data Credit</h2>
+<!-- =====================================
+     9. ACKNOWLEDGMENTS
+===================================== -->
+
+<section id="acknowledgments">
+
+    <h2>
+        9. Acknowledgments & Data Credit
+    </h2>
 
     <p>
         This project was completed as part of the FlyRank ML Internship.
@@ -469,20 +1399,422 @@
     </p>
 
     <p>
-        <a href="https://flyrank.ai" target="_blank">
+
+        <a
+            class="button"
+            href="https://flyrank.ai"
+            target="_blank"
+        >
             FlyRank
         </a>
+
     </p>
+
 </section>
 
 
+</div>
+
+
 <footer>
+
     <p>
-        Search Intelligence Research Project · Refresh / Content Opportunity Scoring
+        Search Intelligence Research Project
     </p>
+
+    <p>
+        Refresh / Content Opportunity Scoring
+    </p>
+
 </footer>
 
-</div>
+
+<!-- =====================================
+     JAVASCRIPT
+===================================== -->
+
+<script>
+
+
+/* =====================================
+   RESULTS CHART
+===================================== */
+
+/*
+    IMPORTANT:
+    Replace these values with the actual
+    numbers from your notebook.
+*/
+
+const baselineSpearman = 0.00;
+const modelSpearman = 0.00;
+
+
+const comparisonContext =
+    document
+        .getElementById("comparisonChart")
+        .getContext("2d");
+
+
+new Chart(
+    comparisonContext,
+    {
+        type: "bar",
+
+        data: {
+
+            labels: [
+                "Week-4 Baseline",
+                "Random Forest"
+            ],
+
+            datasets: [
+
+                {
+                    label:
+                        "Priority Spearman",
+
+                    data: [
+                        baselineSpearman,
+                        modelSpearman
+                    ],
+
+                    borderWidth: 1
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+                    display: false
+                },
+
+                title: {
+
+                    display: true,
+
+                    text:
+                        "Priority Ranking Alignment"
+
+                }
+
+            },
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true,
+
+                    max: 1,
+
+                    title: {
+
+                        display: true,
+
+                        text:
+                            "Spearman Correlation"
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+);
+
+
+/* =====================================
+   RECOMMENDATION CHART
+===================================== */
+
+/*
+    Replace the following example values
+    with your actual Top-20 action scores.
+*/
+
+const recommendationLabels = [
+    "Top 1",
+    "Top 2",
+    "Top 3",
+    "Top 4",
+    "Top 5",
+    "Top 6",
+    "Top 7",
+    "Top 8",
+    "Top 9",
+    "Top 10"
+];
+
+
+const recommendationScores = [
+    0.92,
+    0.88,
+    0.84,
+    0.81,
+    0.79,
+    0.77,
+    0.75,
+    0.73,
+    0.71,
+    0.69
+];
+
+
+const recommendationContext =
+    document
+        .getElementById("recommendationChart")
+        .getContext("2d");
+
+
+new Chart(
+
+    recommendationContext,
+
+    {
+
+        type: "bar",
+
+        data: {
+
+            labels:
+                recommendationLabels,
+
+            datasets: [
+
+                {
+
+                    label:
+                        "Action Score",
+
+                    data:
+                        recommendationScores,
+
+                    borderWidth: 1
+
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                title: {
+
+                    display: true,
+
+                    text:
+                        "Top Content Review Priorities"
+
+                },
+
+                legend: {
+
+                    display: false
+
+                }
+
+            },
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true,
+
+                    max: 1
+
+                }
+
+            }
+
+        }
+
+    }
+
+);
+
+
+/* =====================================
+   SEARCH / FILTER
+===================================== */
+
+function filterTable() {
+
+    const input =
+        document
+            .getElementById("searchInput")
+            .value
+            .toLowerCase();
+
+
+    const reason =
+        document
+            .getElementById("reasonFilter")
+            .value
+            .toLowerCase();
+
+
+    const table =
+        document
+            .getElementById("recommendationTable");
+
+
+    const rows =
+        table
+            .getElementsByTagName("tbody")[0]
+            .getElementsByTagName("tr");
+
+
+    for (
+        let i = 0;
+        i < rows.length;
+        i++
+    ) {
+
+        const contentID =
+            rows[i]
+                .cells[1]
+                .textContent
+                .toLowerCase();
+
+
+        const reasonCode =
+            rows[i]
+                .cells[4]
+                .textContent
+                .toLowerCase();
+
+
+        const matchesSearch =
+            contentID.includes(input);
+
+
+        const matchesReason =
+            reason === ""
+            ||
+            reasonCode.includes(reason);
+
+
+        if (
+            matchesSearch
+            &&
+            matchesReason
+        ) {
+
+            rows[i].style.display = "";
+
+        } else {
+
+            rows[i].style.display = "none";
+
+        }
+
+    }
+
+}
+
+
+/* =====================================
+   SORT TABLE
+===================================== */
+
+function sortTable(columnIndex) {
+
+    const table =
+        document
+            .getElementById("recommendationTable");
+
+
+    const tbody =
+        table
+            .getElementsByTagName("tbody")[0];
+
+
+    const rows =
+        Array
+            .from(tbody.rows);
+
+
+    rows.sort(
+
+        function(a, b) {
+
+            const A =
+                a.cells[columnIndex]
+                .textContent
+                .trim();
+
+
+            const B =
+                b.cells[columnIndex]
+                .textContent
+                .trim();
+
+
+            const numberA =
+                parseFloat(
+                    A.replace(/[^0-9.-]/g, "")
+                );
+
+
+            const numberB =
+                parseFloat(
+                    B.replace(/[^0-9.-]/g, "")
+                );
+
+
+            if (
+                !isNaN(numberA)
+                &&
+                !isNaN(numberB)
+            ) {
+
+                return numberA - numberB;
+
+            }
+
+
+            return A.localeCompare(B);
+
+        }
+
+    );
+
+
+    rows.forEach(
+
+        function(row) {
+
+            tbody.appendChild(row);
+
+        }
+
+    );
+
+}
+
+</script>
+
 
 </body>
 </html>
