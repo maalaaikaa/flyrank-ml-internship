@@ -1,620 +1,821 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
 
-<title>Refresh & Content Opportunity Scoring | Search Intelligence Research</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>
+        Content Refresh Prioritization | Search Intelligence Research
+    </title>
 
-<style>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-:root {
-    --bg: #f5f7fb;
-    --card: #ffffff;
-    --text: #18202a;
-    --muted: #667085;
-    --border: #e5e7eb;
-    --accent: #5b5bd6;
-    --accent-light: #eeeeff;
-    --dark: #111827;
-    --success: #15803d;
-    --warning: #b45309;
-    --danger: #b91c1c;
-}
 
-* {
-    box-sizing: border-box;
-}
+    <style>
 
-html {
-    scroll-behavior: smooth;
-}
+        /* =====================================================
+           1. ROOT COLORS AND GENERAL SETTINGS
+        ===================================================== */
 
-body {
-    margin: 0;
-    font-family:
-        Inter,
-        Arial,
-        sans-serif;
+        :root {
 
-    line-height: 1.7;
-    background: var(--bg);
-    color: var(--text);
-}
+            --background: #f5f7fb;
+            --card: #ffffff;
 
+            --text: #18202a;
+            --muted: #667085;
 
-/* =========================
-   NAVIGATION
-========================= */
+            --border: #e5e7eb;
 
-nav {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+            --primary: #5b5bd6;
+            --primary-light: #eeeeff;
 
-    background: rgba(255,255,255,0.96);
+            --dark: #111827;
 
-    backdrop-filter: blur(12px);
+            --success: #15803d;
+            --success-bg: #dcfce7;
 
-    border-bottom:
-        1px solid var(--border);
-}
+            --warning: #b45309;
+            --warning-bg: #fff7ed;
 
-.nav-inner {
-    max-width: 1150px;
-    margin: auto;
+            --danger: #b91c1c;
+            --danger-bg: #fee2e2;
 
-    padding:
-        12px
-        20px;
+        }
 
-    display: flex;
 
-    justify-content: space-between;
+        * {
+            box-sizing: border-box;
+        }
 
-    align-items: center;
 
-    gap: 20px;
-}
+        html {
+            scroll-behavior: smooth;
+        }
 
-.brand {
-    font-weight: 800;
 
-    color: var(--dark);
+        body {
 
-    text-decoration: none;
+            margin: 0;
 
-    white-space: nowrap;
-}
+            font-family:
+                Inter,
+                Arial,
+                Helvetica,
+                sans-serif;
 
-.nav-links {
-    display: flex;
+            line-height: 1.7;
 
-    gap: 16px;
+            background: var(--background);
 
-    flex-wrap: wrap;
-}
+            color: var(--text);
 
-.nav-links a {
-    color: var(--muted);
+        }
 
-    text-decoration: none;
 
-    font-size: 14px;
-}
+        /* =====================================================
+           2. NAVIGATION
+        ===================================================== */
 
-.nav-links a:hover {
-    color: var(--accent);
-}
+        nav {
 
+            position: sticky;
 
-/* =========================
-   MAIN CONTAINER
-========================= */
+            top: 0;
 
-.container {
-    max-width: 1150px;
+            z-index: 1000;
 
-    margin: auto;
+            background:
+                rgba(255, 255, 255, 0.96);
 
-    padding:
-        45px
-        20px;
-}
+            backdrop-filter:
+                blur(12px);
 
+            border-bottom:
+                1px solid var(--border);
 
-/* =========================
-   HERO
-========================= */
+        }
 
-header {
-    background:
-        linear-gradient(
-            135deg,
-            #ffffff,
-            #f0f0ff
-        );
 
-    padding:
-        65px
-        50px;
+        .nav-inner {
 
-    border-radius: 24px;
+            max-width: 1180px;
 
-    border:
-        1px solid var(--border);
+            margin: auto;
 
-    box-shadow:
-        0 12px 40px rgba(0,0,0,0.06);
+            padding:
+                13px
+                22px;
 
-    margin-bottom: 30px;
-}
+            display: flex;
 
-.eyebrow {
-    text-transform: uppercase;
+            align-items: center;
 
-    letter-spacing: 1.5px;
+            justify-content: space-between;
 
-    font-size: 12px;
+            gap: 20px;
 
-    font-weight: 800;
+        }
 
-    color: var(--accent);
 
-    margin-bottom: 15px;
-}
+        .brand {
 
-h1 {
-    font-size:
-        clamp(
-            36px,
-            6vw,
-            60px
-        );
+            font-weight: 800;
 
-    line-height: 1.1;
+            color: var(--dark);
 
-    letter-spacing: -1.5px;
+            text-decoration: none;
 
-    margin:
-        0
-        0
-        20px;
-}
+            white-space: nowrap;
 
-.subtitle {
-    font-size: 20px;
+        }
 
-    color: var(--muted);
 
-    max-width: 850px;
-}
+        .nav-links {
 
+            display: flex;
 
-/* =========================
-   SECTIONS
-========================= */
+            flex-wrap: wrap;
 
-section {
-    background: var(--card);
+            gap: 16px;
 
-    padding: 38px;
+        }
 
-    margin-bottom: 25px;
 
-    border-radius: 20px;
+        .nav-links a {
 
-    border:
-        1px solid var(--border);
+            color: var(--muted);
 
-    box-shadow:
-        0 5px 20px rgba(0,0,0,0.035);
-}
+            text-decoration: none;
 
-h2 {
-    margin-top: 0;
+            font-size: 14px;
 
-    font-size: 30px;
+            font-weight: 600;
 
-    letter-spacing: -0.5px;
-}
+        }
 
-h3 {
-    margin-top: 30px;
-}
 
-p {
-    color: #3f4752;
-}
+        .nav-links a:hover {
 
+            color: var(--primary);
 
-/* =========================
-   STAT CARDS
-========================= */
+        }
 
-.hero-stats,
-.metric-grid {
-    display: grid;
 
-    grid-template-columns:
-        repeat(
-            auto-fit,
-            minmax(190px, 1fr)
-        );
 
-    gap: 16px;
+        /* =====================================================
+           3. MAIN CONTAINER
+        ===================================================== */
 
-    margin-top: 28px;
-}
+        .container {
 
-.stat,
-.metric {
-    background: white;
+            max-width: 1180px;
 
-    border:
-        1px solid var(--border);
+            margin: auto;
 
-    border-radius: 15px;
+            padding:
+                45px
+                20px;
 
-    padding: 20px;
-}
+        }
 
-.metric {
-    background: #fafafa;
-}
 
-.stat-label,
-.metric span {
-    color: var(--muted);
 
-    font-size: 13px;
-}
+        /* =====================================================
+           4. HERO / TITLE SECTION
+        ===================================================== */
 
-.stat-value,
-.metric strong {
-    display: block;
+        header {
 
-    font-size: 24px;
+            background:
+                linear-gradient(
+                    135deg,
+                    #ffffff,
+                    #f0f0ff
+                );
 
-    font-weight: 800;
+            padding:
+                65px
+                55px;
 
-    margin-top: 5px;
-}
+            border-radius: 25px;
 
+            border:
+                1px solid var(--border);
 
-/* =========================
-   HIGHLIGHT BOXES
-========================= */
+            box-shadow:
+                0 12px 40px rgba(0,0,0,0.06);
 
-.highlight {
-    background: var(--accent-light);
+            margin-bottom: 28px;
 
-    border-left:
-        4px solid var(--accent);
+        }
 
-    padding: 20px;
 
-    border-radius: 12px;
+        .eyebrow {
 
-    margin:
-        25px
-        0;
-}
+            text-transform: uppercase;
 
-.warning {
-    background: #fff7ed;
+            letter-spacing: 1.5px;
 
-    border-left:
-        4px solid var(--warning);
+            font-size: 12px;
 
-    padding: 20px;
+            font-weight: 800;
 
-    border-radius: 12px;
+            color: var(--primary);
 
-    margin:
-        25px
-        0;
-}
+            margin-bottom: 15px;
 
+        }
 
-/* =========================
-   DETAILS
-========================= */
 
-details {
-    border:
-        1px solid var(--border);
+        h1 {
 
-    border-radius: 12px;
+            font-size:
+                clamp(
+                    38px,
+                    6vw,
+                    64px
+                );
 
-    padding: 16px 18px;
+            line-height: 1.1;
 
-    margin: 12px 0;
-}
+            letter-spacing: -1.5px;
 
-summary {
-    cursor: pointer;
+            margin:
+                0
+                0
+                15px;
 
-    font-weight: 700;
-}
+        }
 
 
-/* =========================
-   CHART
-========================= */
+        .author {
 
-.chart-container {
-    position: relative;
+            font-size: 17px;
 
-    width: 100%;
+            font-weight: 700;
 
-    height: 400px;
+            color: var(--dark);
 
-    margin-top: 30px;
-}
+            margin-bottom: 3px;
 
+        }
 
-/* =========================
-   FILTERS
-========================= */
 
-.filters {
-    display: flex;
+        .author-details {
 
-    flex-wrap: wrap;
+            font-size: 14px;
 
-    gap: 12px;
+            color: var(--muted);
 
-    margin:
-        20px
-        0;
-}
+            margin-bottom: 25px;
 
-.filters input,
-.filters select {
-    padding:
-        12px
-        14px;
+        }
 
-    border:
-        1px solid var(--border);
 
-    border-radius: 10px;
+        .subtitle {
 
-    background: white;
+            font-size: 20px;
 
-    font-size: 14px;
-}
+            color: var(--muted);
 
-.filters input {
-    min-width: 260px;
-}
+            max-width: 850px;
 
+        }
 
-/* =========================
-   TABLE
-========================= */
 
-.table-wrapper {
-    overflow-x: auto;
 
-    border:
-        1px solid var(--border);
+        /* =====================================================
+           5. GENERAL SECTIONS
+        ===================================================== */
 
-    border-radius: 14px;
-}
+        section {
 
-table {
-    width: 100%;
+            background: var(--card);
 
-    border-collapse: collapse;
+            padding: 40px;
 
-    min-width: 750px;
-}
+            margin-bottom: 25px;
 
-th,
-td {
-    padding:
-        14px
-        15px;
+            border-radius: 20px;
 
-    text-align: left;
+            border:
+                1px solid var(--border);
 
-    border-bottom:
-        1px solid var(--border);
-}
+            box-shadow:
+                0 5px 20px rgba(0,0,0,0.035);
 
-th {
-    background: #f8f9fb;
+        }
 
-    cursor: pointer;
 
-    user-select: none;
+        h2 {
 
-    font-size: 13px;
-}
+            margin-top: 0;
 
-th:hover {
-    background: #eef0f5;
-}
+            font-size: 30px;
 
-tr:hover td {
-    background: #fafaff;
-}
+            letter-spacing: -0.5px;
 
+        }
 
-/* =========================
-   BADGES
-========================= */
 
-.badge {
-    display: inline-block;
+        h3 {
 
-    padding:
-        5px
-        10px;
+            margin-top: 28px;
 
-    border-radius: 999px;
+        }
 
-    font-size: 12px;
 
-    font-weight: 700;
-}
+        p {
 
-.review {
-    background: #fee2e2;
+            color: #3f4752;
 
-    color: var(--danger);
-}
+        }
 
-.monitor {
-    background: #dcfce7;
 
-    color: var(--success);
-}
 
-.neutral {
-    background: #eef2f7;
+        /* =====================================================
+           6. STATISTICS CARDS
+        ===================================================== */
 
-    color: #475467;
-}
+        .hero-stats,
+        .metric-grid {
 
+            display: grid;
 
-/* =========================
-   BUTTON
-========================= */
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(190px, 1fr)
+                );
 
-.button {
-    display: inline-block;
+            gap: 16px;
 
-    padding:
-        12px
-        18px;
+            margin-top: 28px;
 
-    background: var(--dark);
+        }
 
-    color: white;
 
-    text-decoration: none;
+        .stat,
+        .metric {
 
-    border-radius: 10px;
+            background: white;
 
-    font-weight: 700;
+            border:
+                1px solid var(--border);
 
-    font-size: 14px;
-}
+            border-radius: 15px;
 
-.button:hover {
-    opacity: 0.9;
-}
+            padding: 20px;
 
+        }
 
-/* =========================
-   STATUS
-========================= */
 
-.status {
-    padding: 15px;
+        .metric {
 
-    border-radius: 10px;
+            background: #fafafa;
 
-    background: #f8f9fb;
+        }
 
-    color: var(--muted);
 
-    margin: 15px 0;
-}
+        .stat-label,
+        .metric span {
 
+            color: var(--muted);
 
-/* =========================
-   FOOTER
-========================= */
+            font-size: 13px;
 
-footer {
-    text-align: center;
+        }
 
-    color: var(--muted);
 
-    padding:
-        30px
-        20px
-        50px;
-}
+        .stat-value,
+        .metric strong {
 
+            display: block;
 
-/* =========================
-   MOBILE
-========================= */
+            font-size: 22px;
 
-@media (max-width: 700px) {
+            font-weight: 800;
 
-    .nav-inner {
-        flex-direction: column;
+            margin-top: 6px;
 
-        align-items: flex-start;
-    }
+        }
 
-    header {
-        padding:
-            40px
-            25px;
-    }
 
-    section {
-        padding: 25px;
-    }
 
-    .chart-container {
-        height: 300px;
-    }
+        /* =====================================================
+           7. HIGHLIGHT BOXES
+        ===================================================== */
 
-    .filters input {
-        width: 100%;
+        .highlight {
 
-        min-width: 0;
-    }
+            background: var(--primary-light);
 
-}
+            border-left:
+                4px solid var(--primary);
 
-</style>
+            padding: 20px;
+
+            border-radius: 12px;
+
+            margin:
+                25px
+                0;
+
+        }
+
+
+        .warning {
+
+            background: var(--warning-bg);
+
+            border-left:
+                4px solid var(--warning);
+
+            padding: 20px;
+
+            border-radius: 12px;
+
+            margin:
+                25px
+                0;
+
+        }
+
+
+
+        /* =====================================================
+           8. ACCORDION / DETAILS
+        ===================================================== */
+
+        details {
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 12px;
+
+            padding: 16px 18px;
+
+            margin: 12px 0;
+
+        }
+
+
+        summary {
+
+            cursor: pointer;
+
+            font-weight: 700;
+
+        }
+
+
+
+        /* =====================================================
+           9. CHART
+        ===================================================== */
+
+        .chart-container {
+
+            position: relative;
+
+            width: 100%;
+
+            height: 400px;
+
+            margin-top: 30px;
+
+        }
+
+
+
+        /* =====================================================
+           10. FILTERS
+        ===================================================== */
+
+        .filters {
+
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 12px;
+
+            margin:
+                22px
+                0;
+
+        }
+
+
+        .filters input,
+        .filters select {
+
+            padding:
+                12px
+                14px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 10px;
+
+            background: white;
+
+            font-size: 14px;
+
+        }
+
+
+        .filters input {
+
+            min-width: 260px;
+
+        }
+
+
+
+        /* =====================================================
+           11. TABLE
+        ===================================================== */
+
+        .table-wrapper {
+
+            overflow-x: auto;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 14px;
+
+        }
+
+
+        table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+
+            min-width: 750px;
+
+        }
+
+
+        th,
+        td {
+
+            padding:
+                14px
+                15px;
+
+            text-align: left;
+
+            border-bottom:
+                1px solid var(--border);
+
+        }
+
+
+        th {
+
+            background: #f8f9fb;
+
+            cursor: pointer;
+
+            user-select: none;
+
+            font-size: 13px;
+
+        }
+
+
+        th:hover {
+
+            background: #eef0f5;
+
+        }
+
+
+        tr:hover td {
+
+            background: #fafaff;
+
+        }
+
+
+
+        /* =====================================================
+           12. ACTION BADGES
+        ===================================================== */
+
+        .badge {
+
+            display: inline-block;
+
+            padding:
+                5px
+                10px;
+
+            border-radius: 999px;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+        }
+
+
+        .review {
+
+            background: var(--danger-bg);
+
+            color: var(--danger);
+
+        }
+
+
+        .monitor {
+
+            background: var(--success-bg);
+
+            color: var(--success);
+
+        }
+
+
+        .neutral {
+
+            background: #eef2f7;
+
+            color: #475467;
+
+        }
+
+
+
+        /* =====================================================
+           13. STATUS MESSAGE
+        ===================================================== */
+
+        .status {
+
+            padding: 15px;
+
+            border-radius: 10px;
+
+            background: #f8f9fb;
+
+            color: var(--muted);
+
+            margin: 15px 0;
+
+        }
+
+
+        .status.success {
+
+            background: var(--success-bg);
+
+            color: var(--success);
+
+        }
+
+
+        .status.error {
+
+            background: var(--danger-bg);
+
+            color: var(--danger);
+
+        }
+
+
+
+        /* =====================================================
+           14. FOOTER
+        ===================================================== */
+
+        footer {
+
+            text-align: center;
+
+            color: var(--muted);
+
+            padding:
+                30px
+                20px
+                50px;
+
+        }
+
+
+
+        /* =====================================================
+           15. MOBILE
+        ===================================================== */
+
+        @media (max-width: 700px) {
+
+            .nav-inner {
+
+                flex-direction: column;
+
+                align-items: flex-start;
+
+            }
+
+
+            header {
+
+                padding:
+                    40px
+                    25px;
+
+            }
+
+
+            section {
+
+                padding: 25px;
+
+            }
+
+
+            .chart-container {
+
+                height: 300px;
+
+            }
+
+
+            .filters input {
+
+                width: 100%;
+
+                min-width: 0;
+
+            }
+
+        }
+
+    </style>
+
 </head>
+
 
 
 <body>
 
 
-<!-- =========================
+<!-- =====================================================
      NAVIGATION
-========================= -->
+===================================================== -->
 
 <nav>
 
-<div class="nav-inner">
+    <div class="nav-inner">
 
-<a href="#" class="brand">
-Search Intelligence Research
-</a>
+        <a href="#" class="brand">
+            Content Refresh Research
+        </a>
 
-<div class="nav-links">
 
-<a href="#abstract">Abstract</a>
+        <div class="nav-links">
 
-<a href="#problem">Problem</a>
+            <a href="#abstract">
+                Abstract
+            </a>
 
-<a href="#data">Data</a>
+            <a href="#problem">
+                Problem
+            </a>
 
-<a href="#methodology">Method</a>
+            <a href="#data">
+                Data
+            </a>
 
-<a href="#results">Results</a>
+            <a href="#methodology">
+                Method
+            </a>
 
-<a href="#recommendations">Recommendations</a>
+            <a href="#results">
+                Results
+            </a>
 
-</div>
+            <a href="#recommendations">
+                Recommendations
+            </a>
 
-</div>
+        </div>
+
+    </div>
 
 </nav>
 
@@ -623,800 +824,954 @@ Search Intelligence Research
 <div class="container">
 
 
-<!-- =========================
-     TITLE
-========================= -->
+<!-- =====================================================
+     TITLE SECTION
+===================================================== -->
 
 <header>
 
-<div class="eyebrow">
-FlyRank ML Internship Capstone
-</div>
-
-<h1>
-Refresh & Content Opportunity Scoring
-</h1>
-
-<p class="subtitle">
-
-A repeatable machine learning and ranking workflow for prioritizing
-content review using observed search, visibility, click, and
-engagement signals.
-
-</p>
+    <div class="eyebrow">
+        FlyRank ML Internship Capstone
+    </div>
 
 
-<div class="highlight">
-
-<strong>Research Question:</strong>
-
-Which content items should be prioritized for human review when a
-content team has more pages than it can inspect or refresh at once?
-
-</div>
+    <h1>
+        Content Refresh Prioritization
+    </h1>
 
 
-<div class="hero-stats">
+    <!-- AUTHOR INFORMATION -->
 
-<div class="stat">
-
-<div class="stat-label">
-Capstone Lane
-</div>
-
-<div class="stat-value">
-Content Opportunity
-</div>
-
-</div>
+    <div class="author">
+        Malaika Mumtaz
+    </div>
 
 
-<div class="stat">
-
-<div class="stat-label">
-Analysis Type
-</div>
-
-<div class="stat-value">
-Ranking + ML
-</div>
-
-</div>
+    <div class="author-details">
+        BS Artificial Intelligence 
+    </div>
 
 
-<div class="stat">
+    <p class="subtitle">
 
-<div class="stat-label">
-Validation
-</div>
+        A repeatable machine learning and ranking workflow for
+        prioritizing content pages for human review and potential
+        refresh using observed search, visibility, engagement,
+        and trend signals.
 
-<div class="stat-value">
-Client Grouped
-</div>
-
-</div>
+    </p>
 
 
-<div class="stat">
+    <div class="highlight">
 
-<div class="stat-label">
-Final Output
-</div>
+        <strong>
+            Research Question:
+        </strong>
 
-<div class="stat-value">
-Ranked Queue
-</div>
+        Which content pages should be prioritized for review and
+        potential refresh when a content team has more pages than
+        it can inspect or update at once?
 
-</div>
+    </div>
 
-</div>
+
+
+    <div class="hero-stats">
+
+
+        <div class="stat">
+
+            <div class="stat-label">
+                Capstone Lane
+            </div>
+
+            <div class="stat-value">
+                Content Refresh Prioritization
+            </div>
+
+        </div>
+
+
+
+        <div class="stat">
+
+            <div class="stat-label">
+                Analysis Type
+            </div>
+
+            <div class="stat-value">
+                Ranking + ML
+            </div>
+
+        </div>
+
+
+
+        <div class="stat">
+
+            <div class="stat-label">
+                Validation
+            </div>
+
+            <div class="stat-value">
+                Grouped Evaluation
+            </div>
+
+        </div>
+
+
+
+        <div class="stat">
+
+            <div class="stat-label">
+                Final Output
+            </div>
+
+            <div class="stat-value">
+                Ranked Refresh Queue
+            </div>
+
+        </div>
+
+
+    </div>
 
 </header>
 
 
 
-<!-- =========================
+<!-- =====================================================
      ABSTRACT
-========================= -->
+===================================================== -->
 
 <section id="abstract">
 
-<h2>
-Abstract
-</h2>
+    <h2>
+        Abstract
+    </h2>
 
-<p>
 
-This project investigates which content items should be prioritized
-for human review when content teams have more pages than they can
-inspect at once. The analysis uses FlyRank Search Intelligence data
-and observed search, visibility, click-through, engagement, and trend
-signals to build a repeatable prioritization workflow. A transparent
-baseline action score is created first and then compared with a
-machine learning model using the same grouped validation design.
-Potential leakage is checked by excluding identifiers and
-target-derived fields from the predictive feature set. The final
-result is a ranked recommendation queue with reason codes intended
-for decision-support rather than proof of causality or guaranteed
-refresh impact.
+    <p>
 
-</p>
+        This project investigates which content pages should be
+        prioritized for human review and potential refresh when content
+        teams have more pages than they can inspect at once. The
+        analysis uses FlyRank Search Intelligence data and observed
+        search, visibility, click-through, engagement, and trend
+        signals to create a repeatable prioritization workflow. A
+        transparent baseline action score is constructed first and then
+        compared with a machine learning model using the same grouped
+        validation design. Potential leakage is addressed by excluding
+        identifiers and target-derived variables from the predictive
+        feature set. The final output is a ranked content refresh queue
+        with reason codes designed for decision-support rather than
+        proof of causality or guaranteed refresh impact.
+
+    </p>
 
 </section>
 
 
 
-<!-- =========================
-     PROBLEM
-========================= -->
+<!-- =====================================================
+     INTRODUCTION / PROBLEM
+===================================================== -->
 
 <section id="problem">
 
-<h2>
-1. Introduction / Problem Statement
-</h2>
-
-<p>
-
-Content teams often manage more pages than they can realistically
-review. As a result, deciding where to spend editorial effort becomes
-a prioritization problem.
-
-</p>
-
-<p>
-
-This project develops a repeatable workflow that ranks content items
-using observed Search Intelligence signals. The purpose is to help
-identify pages that may deserve earlier human review.
-
-</p>
+    <h2>
+        1. Introduction / Problem Statement
+    </h2>
 
 
-<div class="highlight">
+    <p>
 
-<strong>Decision supported:</strong>
+        Content teams often manage hundreds or thousands of pages and
+        cannot review or refresh every page at the same time. The main
+        challenge is deciding which pages should receive attention
+        first.
 
-The output helps a content team decide which pages to inspect first.
-It does not automatically decide that a page must be refreshed,
-rewritten, removed, or changed.
+    </p>
 
-</div>
+
+    <p>
+
+        This project develops a repeatable prioritization workflow using
+        observed search, visibility, engagement, and trend signals. The
+        goal is to rank content pages according to their priority for
+        human review and possible content refresh.
+
+    </p>
+
+
+    <div class="highlight">
+
+        <strong>
+            Decision supported:
+        </strong>
+
+        The output helps a content team decide which pages should be
+        investigated first for a potential content refresh. The ranking
+        supports human decision-making and does not guarantee that
+        refreshing a page will improve its search performance.
+
+    </div>
 
 </section>
 
 
 
-<!-- =========================
+<!-- =====================================================
      DATA
-========================= -->
+===================================================== -->
 
 <section id="data">
 
-<h2>
-2. Data
-</h2>
-
-<p>
-
-The project uses the FlyRank ML Internship Search Intelligence dataset.
-The dataset contains content-level observations with search demand,
-competition, content characteristics, click-through rate, average
-position, engagement, scrolling behavior, and observed trend signals.
-
-</p>
+    <h2>
+        2. Data
+    </h2>
 
 
-<h3>
-Unit of analysis
-</h3>
+    <p>
 
-<p>
+        This project uses the FlyRank ML Internship Search Intelligence
+        dataset. The data contains content-level observations with
+        search demand, competition, content characteristics,
+        click-through rate, average position, engagement, scrolling
+        behavior, and observed trend signals.
 
-One row represents one content item identified by
-<code>content_id</code>.
-
-</p>
-
-
-<h3>
-Modeling target
-</h3>
-
-<p>
-
-The continuous target used in the modeling workflow is
-<code>trend_pct</code>. This represents an observed trend percentage
-in the dataset.
-
-</p>
+    </p>
 
 
-<details>
-
-<summary>
-Fields excluded from prediction
-</summary>
-
-<ul>
-
-<li>
-<code>content_id</code> — identifier only and not a meaningful
-predictive signal.
-</li>
-
-<li>
-<code>client_id</code> — used to create grouped validation splits
-rather than as a predictive feature.
-</li>
-
-<li>
-<code>trend_pct</code> — the target variable.
-</li>
-
-<li>
-<code>trend_direction</code> — excluded because it is closely related
-to the target and creates a leakage risk.
-</li>
-
-<li>
-Duplicate or derived tier fields — excluded when they directly bucket
-underlying numeric measurements already available as features.
-</li>
-
-</ul>
-
-</details>
+    <h3>
+        Unit of Analysis
+    </h3>
 
 
-<div class="warning">
+    <p>
 
-<strong>Public-safe data rule:</strong>
+        One row represents one content item identified by a
+        content-level identifier.
 
-No client names, domains, private URLs, private queries, credentials,
-or raw private exports are displayed in this research paper.
+    </p>
 
-</div>
+
+    <h3>
+        Modeling Target
+    </h3>
+
+
+    <p>
+
+        The modeling workflow uses the target defined in the project
+        notebook. In the current implementation, the observed
+        <code>trend_pct</code> field is used as the continuous target
+        for the machine learning comparison.
+
+    </p>
+
+
+    <details>
+
+        <summary>
+            Fields excluded from prediction
+        </summary>
+
+
+        <ul>
+
+            <li>
+
+                <strong>content_id</strong> — excluded because it is an
+                identifier and does not represent a generalizable content
+                signal.
+
+            </li>
+
+
+            <li>
+
+                <strong>client_id</strong> — excluded from prediction and
+                used for grouped validation to reduce overly optimistic
+                evaluation caused by client-level similarity.
+
+            </li>
+
+
+            <li>
+
+                <strong>trend_pct</strong> — excluded from features
+                because it is the prediction target.
+
+            </li>
+
+
+            <li>
+
+                <strong>trend_direction</strong> — excluded because it is
+                directly related to the target and could create leakage.
+
+            </li>
+
+
+            <li>
+
+                Identifier-like, target-derived, or redundant derived
+                fields are excluded when they could introduce leakage or
+                duplicate information already represented by the original
+                measurement.
+
+            </li>
+
+        </ul>
+
+    </details>
+
+
+    <div class="warning">
+
+        <strong>
+            Public-safe data rule:
+        </strong>
+
+        This research paper does not display client names, domains,
+        private URLs, private search queries, credentials, or raw private
+        data exports.
+
+    </div>
 
 </section>
 
 
 
-<!-- =========================
+<!-- =====================================================
      METHODOLOGY
-========================= -->
+===================================================== -->
 
 <section id="methodology">
 
-<h2>
-3. Methodology
-</h2>
+    <h2>
+        3. Methodology
+    </h2>
 
 
-<details open>
 
-<summary>
-Feature engineering
-</summary>
+    <details open>
 
-<p>
-
-Numeric variables are handled using median imputation. Categorical
-variables are handled using missing-value treatment and one-hot
-encoding. Identifiers and target-derived variables are excluded.
-
-</p>
-
-</details>
+        <summary>
+            Feature Engineering
+        </summary>
 
 
-<details>
+        <p>
 
-<summary>
-Baseline action score
-</summary>
+            Numeric variables are handled using appropriate missing-value
+            treatment, including median imputation where required.
+            Categorical variables are handled through missing-value
+            treatment and encoding. Identifier fields and target-derived
+            fields are excluded from the predictive feature vector.
 
-<p>
+        </p>
 
-A transparent baseline score combines safe observed signals such as
-click-through rate, average position, engagement, and search demand.
-The score creates an interpretable ranking and reason codes for human
-review.
-
-</p>
-
-</details>
+    </details>
 
 
-<details>
 
-<summary>
-Machine learning model
-</summary>
+    <details>
 
-<p>
-
-A Random Forest regression approach is used to model the continuous
-trend target. The model can capture non-linear relationships between
-the available features and the observed target.
-
-</p>
-
-</details>
+        <summary>
+            Baseline Action Score
+        </summary>
 
 
-<details>
+        <p>
 
-<summary>
-Validation design
-</summary>
+            A transparent baseline action score combines safe observed
+            signals such as search demand, click-through rate, average
+            position, engagement, scrolling behavior, and trend
+            information according to the rules defined in the project
+            notebook. The baseline produces an interpretable ranking and
+            reason codes for human review.
 
-<p>
+        </p>
 
-The train/test split is grouped by <code>client_id</code> so that the
-same client group is not used simultaneously for both training and
-evaluation. This is intended to reduce overly optimistic performance
-caused by client-level similarity.
-
-</p>
-
-</details>
+    </details>
 
 
-<details>
 
-<summary>
-Leakage checks
-</summary>
+    <details>
 
-<p>
+        <summary>
+            Machine Learning Model
+        </summary>
 
-Identifiers, target values, and target-derived fields are excluded from
-the predictive feature set. The analysis also checks whether included
-features are available at the intended prediction moment.
 
-</p>
+        <p>
 
-</details>
+            A Random Forest regression model is used to learn potentially
+            non-linear relationships between the available search and
+            content features and the observed continuous target. The
+            model is compared against the baseline using the same
+            validation logic.
+
+        </p>
+
+    </details>
+
+
+
+    <details>
+
+        <summary>
+            Validation Design
+        </summary>
+
+
+        <p>
+
+            The train and test data are separated using grouped validation
+            based on client-level grouping. This reduces the possibility
+            that highly similar observations from the same client appear
+            in both the training and evaluation data.
+
+        </p>
+
+    </details>
+
+
+
+    <details>
+
+        <summary>
+            Leakage Checks
+        </summary>
+
+
+        <p>
+
+            Identifier columns, the target itself, and variables derived
+            directly from the target are excluded. Features are also
+            reviewed to determine whether they are available before the
+            intended prediction or prioritization moment.
+
+        </p>
+
+    </details>
 
 </section>
 
 
 
-<!-- =========================
+<!-- =====================================================
      RESULTS
-========================= -->
+===================================================== -->
 
 <section id="results">
 
-<h2>
-4. Results
-</h2>
-
-<p>
-
-The baseline and machine learning approach are evaluated using the
-same validation logic. The comparison should be interpreted as
-observed performance on the held-out data rather than evidence of
-causal impact.
-
-</p>
+    <h2>
+        4. Results
+    </h2>
 
 
-<div class="metric-grid">
+    <p>
 
-<div class="metric">
+        The baseline scoring approach and machine learning model are
+        evaluated using the same validation design. Results should be
+        interpreted as observed performance on held-out data rather than
+        evidence that refreshing content causes a specific outcome.
 
-<strong id="recommendationCount">
-Loading...
-</strong>
-
-<span>
-Ranked Recommendations Loaded
-</span>
-
-</div>
+    </p>
 
 
-<div class="metric">
 
-<strong id="topScore">
-Loading...
-</strong>
-
-<span>
-Highest Action Score
-</span>
-
-</div>
+    <div class="metric-grid">
 
 
-<div class="metric">
+        <div class="metric">
 
-<strong>
-Grouped
-</strong>
+            <!-- Starts as — instead of Loading -->
 
-<span>
-Validation Design
-</span>
+            <strong id="recommendationCount">
+                —
+            </strong>
 
-</div>
+            <span>
+                Ranked Recommendations
+            </span>
 
-
-<div class="metric">
-
-<strong>
-Decision Support
-</strong>
-
-<span>
-Intended Use
-</span>
-
-</div>
-
-</div>
+        </div>
 
 
-<div class="chart-container">
 
-<canvas id="scoreChart"></canvas>
+        <div class="metric">
 
-</div>
+            <!-- Starts as — instead of Loading -->
+
+            <strong id="topScore">
+                —
+            </strong>
+
+            <span>
+                Highest Action Score
+            </span>
+
+        </div>
 
 
-<div class="highlight">
 
-<strong>Interpretation:</strong>
+        <div class="metric">
 
-Higher-ranked items are candidates for earlier human review based on
-the scoring workflow. The ranking does not prove that changing a page
-will cause improved search performance.
+            <strong>
+                Grouped
+            </strong>
 
-</div>
+            <span>
+                Validation Design
+            </span>
+
+        </div>
+
+
+
+        <div class="metric">
+
+            <strong>
+                Decision-Support
+            </strong>
+
+            <span>
+                Intended Use
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+
+    <div class="chart-container">
+
+        <canvas id="scoreChart"></canvas>
+
+    </div>
+
+
+    <div class="highlight">
+
+        <strong>
+            Interpretation:
+        </strong>
+
+        Higher-ranked pages are candidates for earlier human review based
+        on the scoring workflow. The ranking does not prove that
+        refreshing a page will cause improved search visibility,
+        engagement, or traffic.
+
+    </div>
 
 </section>
 
 
 
-<!-- =========================
+<!-- =====================================================
      LIMITATIONS
-========================= -->
+===================================================== -->
 
 <section id="limitations">
 
-<h2>
-5. Limitations & Honest Framing
-</h2>
+    <h2>
+        5. Limitations & Honest Framing
+    </h2>
 
 
-<details open>
 
-<summary>
-Observational data
-</summary>
+    <details open>
 
-<p>
-
-This analysis uses observational data. It can identify measured
-patterns and associations but cannot prove that refreshing or changing
-content causes a specific outcome.
-
-</p>
-
-</details>
+        <summary>
+            Observational Data
+        </summary>
 
 
-<details>
+        <p>
 
-<summary>
-Missing context
-</summary>
+            This analysis uses observational data. It can identify
+            measured patterns and associations but cannot prove that a
+            content refresh causes a particular performance outcome.
 
-<p>
+        </p>
 
-Editorial quality, seasonality, competitor activity, business
-priorities, and other external factors may not be fully represented in
-the available data.
-
-</p>
-
-</details>
+    </details>
 
 
-<details>
 
-<summary>
-Model limitations
-</summary>
+    <details>
 
-<p>
-
-Machine learning performance depends on the available features, target
-definition, and validation design. Performance on a future or different
-dataset may differ.
-
-</p>
-
-</details>
+        <summary>
+            Missing Context
+        </summary>
 
 
-<div class="warning">
+        <p>
 
-<strong>Honest framing:</strong>
+            Factors such as editorial quality, seasonality, competitor
+            activity, search algorithm changes, and business priorities
+            may not be fully represented in the available dataset.
 
-Observed · Measured · Directional · Decision-Support
+        </p>
 
-</div>
+    </details>
+
+
+
+    <details>
+
+        <summary>
+            Model Limitations
+        </summary>
+
+
+        <p>
+
+            Model performance depends on the available data, feature
+            definitions, target definition, and validation design.
+            Performance may differ when applied to future or different
+            data.
+
+        </p>
+
+    </details>
+
+
+    <div class="warning">
+
+        <strong>
+            Honest framing:
+        </strong>
+
+        Observed · Measured · Directional · Decision-Support
+
+    </div>
 
 </section>
 
 
 
-<!-- =========================
-     RECOMMENDATIONS
-========================= -->
+<!-- =====================================================
+     RANKED RECOMMENDATIONS
+===================================================== -->
 
 <section id="recommendations">
 
-<h2>
-6. Ranked Recommendations
-</h2>
+    <h2>
+        6. Ranked Content Refresh Recommendations
+    </h2>
 
-<p>
 
-The interactive table below loads the ranked recommendation output
-generated by the project. You can search, filter, and sort the
-recommendations.
+    <p>
 
-</p>
+        The interactive table below displays content pages ranked by
+        their priority for human review and potential content refresh.
+        Use the search and filters to explore the recommendations.
 
+    </p>
 
-<div class="filters">
 
-<input
-type="text"
-id="searchInput"
-placeholder="Search recommendation..."
-onkeyup="filterTable()"
->
 
+    <!-- FILTERS -->
 
-<select
-id="actionFilter"
-onchange="filterTable()"
->
+    <div class="filters">
 
-<option value="">
-All actions
-</option>
 
-</select>
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Search by Content ID..."
+            onkeyup="filterTable()"
+        >
 
 
-<select
-id="reasonFilter"
-onchange="filterTable()"
->
+        <select
+            id="actionFilter"
+            onchange="filterTable()"
+        >
 
-<option value="">
-All reason codes
-</option>
+            <option value="">
+                All actions
+            </option>
 
-</select>
+        </select>
 
-</div>
 
 
-<div id="csvStatus" class="status">
+        <select
+            id="reasonFilter"
+            onchange="filterTable()"
+        >
 
-Loading ranked recommendations...
+            <option value="">
+                All reason codes
+            </option>
 
-</div>
+        </select>
 
 
-<div class="table-wrapper">
+    </div>
 
-<table id="recommendationTable">
 
-<thead>
 
-<tr>
+    <!-- CSV STATUS -->
 
-<th onclick="sortTable(0)">
-Rank ↕
-</th>
+    <div
+        id="csvStatus"
+        class="status"
+    >
 
-<th onclick="sortTable(1)">
-Content ID ↕
-</th>
+        Recommendation data will appear here when the CSV file is found.
 
-<th onclick="sortTable(2)">
-Action ↕
-</th>
+    </div>
 
-<th onclick="sortTable(3)">
-Score ↕
-</th>
 
-<th onclick="sortTable(4)">
-Reason Code ↕
-</th>
 
-</tr>
+    <!-- RECOMMENDATION TABLE -->
 
-</thead>
+    <div class="table-wrapper">
 
+        <table id="recommendationTable">
 
-<tbody id="recommendationBody">
 
-</tbody>
+            <thead>
 
-</table>
+                <tr>
 
-</div>
+                    <th onclick="sortTable(0)">
+                        Rank ↕
+                    </th>
 
 
-<div class="chart-container">
+                    <th onclick="sortTable(1)">
+                        Content ID ↕
+                    </th>
 
-<canvas id="topRecommendationChart"></canvas>
 
-</div>
+                    <th onclick="sortTable(2)">
+                        Action ↕
+                    </th>
 
 
-<h3>
-Recommendation logic
-</h3>
+                    <th onclick="sortTable(3)">
+                        Score ↕
+                    </th>
 
 
-<div class="metric-grid">
+                    <th onclick="sortTable(4)">
+                        Reason Code ↕
+                    </th>
 
-<div class="metric">
+                </tr>
 
-<strong>
-LOW CTR
-</strong>
+            </thead>
 
-<span>
-Lower observed click-through signal
-</span>
 
-</div>
 
+            <tbody id="recommendationBody">
 
-<div class="metric">
+            </tbody>
 
-<strong>
-POOR POSITION
-</strong>
 
-<span>
-Weaker observed search position
-</span>
+        </table>
 
-</div>
+    </div>
 
 
-<div class="metric">
 
-<strong>
-LOW ENGAGEMENT
-</strong>
+    <div class="chart-container">
 
-<span>
-Lower observed engagement
-</span>
+        <canvas id="topRecommendationChart"></canvas>
 
-</div>
+    </div>
 
 
-<div class="metric">
 
-<strong>
-HIGH DEMAND
-</strong>
+    <h3>
+        Example Recommendation Signals
+    </h3>
 
-<span>
-Higher observed search demand
-</span>
 
-</div>
+    <div class="metric-grid">
 
-</div>
+
+        <div class="metric">
+
+            <strong>
+                LOW CTR
+            </strong>
+
+            <span>
+                Lower observed click-through signal
+            </span>
+
+        </div>
+
+
+
+        <div class="metric">
+
+            <strong>
+                POOR POSITION
+            </strong>
+
+            <span>
+                Weaker observed search position
+            </span>
+
+        </div>
+
+
+
+        <div class="metric">
+
+            <strong>
+                LOW ENGAGEMENT
+            </strong>
+
+            <span>
+                Lower observed engagement
+            </span>
+
+        </div>
+
+
+
+        <div class="metric">
+
+            <strong>
+                HIGH DEMAND
+            </strong>
+
+            <span>
+                Higher observed search demand
+            </span>
+
+        </div>
+
+
+    </div>
 
 </section>
 
 
 
-<!-- =========================
+<!-- =====================================================
      REPRODUCIBILITY
-========================= -->
+===================================================== -->
 
 <section id="reproducibility">
 
-<h2>
-7. Reproducibility
-</h2>
-
-<p>
-
-The project is structured as a sequence of notebooks covering data
-contracts, feature design, leakage checks, signal auditing, baseline
-scoring, model development, evaluation, and ranked recommendations.
-
-</p>
+    <h2>
+        7. Reproducibility
+    </h2>
 
 
-<ol>
+    <p>
 
-<li>
-Define the unit of analysis and target.
-</li>
+        The project is structured as a sequence of notebooks covering
+        data contracts, feature engineering, leakage checks, signal
+        auditing, baseline scoring, machine learning, validation, and
+        ranked content refresh recommendations.
 
-<li>
-Classify fields as features, labels, context, or excluded variables.
-</li>
-
-<li>
-Check missing values and data limitations.
-</li>
-
-<li>
-Test safe search and content signals.
-</li>
-
-<li>
-Build a transparent baseline ranking.
-</li>
-
-<li>
-Perform grouped validation.
-</li>
-
-<li>
-Train and evaluate the machine learning model.
-</li>
-
-<li>
-Generate ranked recommendations with reason codes.
-</li>
-
-</ol>
+    </p>
 
 
-<p>
+    <ol>
 
-The notebooks and project artifacts are available in the accompanying
-GitHub repository.
+        <li>
+            Define the research question and unit of analysis.
+        </li>
 
-</p>
+        <li>
+            Classify fields as features, labels, context, or excluded.
+        </li>
+
+        <li>
+            Check data quality and missing values.
+        </li>
+
+        <li>
+            Audit safe search and content signals.
+        </li>
+
+        <li>
+            Build a transparent baseline action score.
+        </li>
+
+        <li>
+            Perform grouped validation.
+        </li>
+
+        <li>
+            Train and evaluate the machine learning model.
+        </li>
+
+        <li>
+            Generate ranked content refresh recommendations with reason
+            codes.
+        </li>
+
+    </ol>
+
+
+    <div class="highlight">
+
+        <strong>
+            Reproducibility:
+        </strong>
+
+        The notebooks used for this analysis are stored in the project
+        repository under the required project structure.
+
+    </div>
 
 </section>
 
 
 
-<!-- =========================
+<!-- =====================================================
      ACKNOWLEDGMENTS
-========================= -->
+===================================================== -->
 
 <section id="acknowledgments">
 
-<h2>
-8. Acknowledgments & Data Credit
-</h2>
+    <h2>
+        8. Acknowledgments & Data Credit
+    </h2>
 
-<p>
 
-This project was completed as part of the FlyRank ML Internship.
+    <p>
 
-</p>
+        This project was completed as part of the FlyRank ML Internship.
 
-<p>
+    </p>
 
-Built on the FlyRank ML Internship dataset.
 
-</p>
+    <p>
+
+        Built on the FlyRank ML Internship dataset.
+
+    </p>
+
+
+    <p>
+
+        Data credit:
+        <a href="https://flyrank.ai"
+           target="_blank">
+
+            FlyRank
+
+        </a>
+
+    </p>
 
 </section>
 
@@ -1425,19 +1780,23 @@ Built on the FlyRank ML Internship dataset.
 
 
 
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
 <footer>
 
-<p>
-Search Intelligence Research Project
-</p>
+    <p>
+        Content Refresh Prioritization
+    </p>
 
-<p>
-Refresh & Content Opportunity Scoring
-</p>
+    <p>
+        Research by Malaika Mumtaz
+    </p>
 
-<p>
-Built on the FlyRank ML Internship dataset
-</p>
+    <p>
+        Built on the FlyRank ML Internship dataset
+    </p>
 
 </footer>
 
@@ -1445,12 +1804,43 @@ Built on the FlyRank ML Internship dataset
 
 <script>
 
-/* ==========================================
-   CSV FILE LOCATION
-========================================== */
+
+/* =====================================================
+   IMPORTANT:
+   CSV FILE PATH
+===================================================== */
+
+
+/*
+    CHANGE ONLY THIS PATH IF YOUR CSV HAS A DIFFERENT NAME.
+
+    Example 1:
+
+    const CSV_PATH =
+    "../work/outputs/capstone_ranked_recommendations.csv";
+
+
+    Example 2:
+
+    const CSV_PATH =
+    "../work/outputs/baseline_action_score.csv";
+
+
+    You need to check the EXACT filename inside:
+
+    work/outputs/
+
+*/
+
 
 const CSV_PATH =
-"../work/outputs/capstone_ranked_recommendations.csv";
+    "../work/outputs/refresh_queue_sample.csv";
+
+
+
+/* =====================================================
+   GLOBAL VARIABLES
+===================================================== */
 
 
 let recommendationData = [];
@@ -1459,26 +1849,37 @@ let scoreChart = null;
 
 let topRecommendationChart = null;
 
+let ascending = true;
 
-/* ==========================================
+
+
+/* =====================================================
    SIMPLE CSV PARSER
-========================================== */
+===================================================== */
+
 
 function parseCSV(text) {
+
 
     const lines =
         text
         .trim()
         .split(/\r?\n/);
 
+
     if (lines.length < 2) {
+
         return [];
+
     }
+
 
     const headers =
         splitCSVLine(lines[0]);
 
+
     const data = [];
+
 
     for (
         let i = 1;
@@ -1486,39 +1887,55 @@ function parseCSV(text) {
         i++
     ) {
 
+
         const values =
             splitCSVLine(lines[i]);
 
+
         const row = {};
 
+
         headers.forEach(
+
             function(header, index) {
 
                 row[
-                    header
-                    .trim()
+                    header.trim()
                 ] =
                     values[index] || "";
 
             }
+
         );
+
 
         data.push(row);
 
     }
+
 
     return data;
 
 }
 
 
+
+/* =====================================================
+   SPLIT CSV LINE
+===================================================== */
+
+
 function splitCSVLine(line) {
+
 
     const result = [];
 
+
     let current = "";
 
+
     let insideQuotes = false;
+
 
     for (
         let i = 0;
@@ -1526,8 +1943,10 @@ function splitCSVLine(line) {
         i++
     ) {
 
+
         const character =
             line[i];
+
 
         if (
             character === '"'
@@ -1538,22 +1957,30 @@ function splitCSVLine(line) {
 
         }
 
+
         else if (
+
             character === ","
             &&
             !insideQuotes
+
         ) {
 
+
             result.push(
+
                 current.replace(
                     /^"|"$/g,
                     ""
                 )
+
             );
+
 
             current = "";
 
         }
+
 
         else {
 
@@ -1564,85 +1991,119 @@ function splitCSVLine(line) {
 
     }
 
+
     result.push(
+
         current.replace(
             /^"|"$/g,
             ""
         )
+
     );
+
 
     return result;
 
 }
 
 
-/* ==========================================
+
+/* =====================================================
    FIND COLUMN FLEXIBLY
-========================================== */
+===================================================== */
+
 
 function getValue(
     row,
     possibleNames
 ) {
 
+
     const keys =
         Object.keys(row);
+
 
     for (
         const name
         of possibleNames
     ) {
 
+
         const found =
             keys.find(
+
                 key =>
+
                     key
                     .toLowerCase()
+
                     ===
+
                     name.toLowerCase()
+
             );
 
+
         if (found) {
+
             return row[found];
+
         }
 
     }
+
 
     return "";
 
 }
 
 
-/* ==========================================
-   LOAD CSV
-========================================== */
+
+/* =====================================================
+   LOAD RECOMMENDATION CSV
+===================================================== */
+
 
 async function loadRecommendations() {
 
+
     try {
+
 
         const response =
             await fetch(CSV_PATH);
 
+
         if (!response.ok) {
 
             throw new Error(
-                "CSV file could not be loaded."
+                "CSV file could not be found."
             );
 
         }
 
+
         const text =
             await response.text();
+
 
         recommendationData =
             parseCSV(text);
 
+
+
+        /* SORT DATA BY SCORE */
+
+
         recommendationData.sort(
+
             function(a, b) {
 
+
                 const scoreA =
+
                     Number(
+
                         getValue(
                             a,
                             [
@@ -1651,10 +2112,14 @@ async function loadRecommendations() {
                                 "priority_score"
                             ]
                         )
+
                     );
 
+
                 const scoreB =
+
                     Number(
+
                         getValue(
                             b,
                             [
@@ -1663,68 +2128,154 @@ async function loadRecommendations() {
                                 "priority_score"
                             ]
                         )
+
                     );
+
 
                 return scoreB - scoreA;
 
             }
+
         );
+
+
+
+        /* RENDER DATA */
 
 
         renderTable(
             recommendationData
         );
 
+
         populateFilters();
+
 
         updateSummary();
 
+
         createCharts();
 
-        document
-            .getElementById("csvStatus")
-            .textContent =
-                recommendationData.length
-                +
-                " recommendations loaded successfully.";
+
+
+        /* SUCCESS MESSAGE */
+
+
+        const status =
+            document.getElementById(
+                "csvStatus"
+            );
+
+
+        status.textContent =
+
+            recommendationData.length
+
+            +
+
+            " ranked content recommendations loaded successfully.";
+
+
+        status.className =
+            "status success";
+
 
     }
 
+
+
     catch (error) {
 
-        document
-            .getElementById("csvStatus")
-            .innerHTML =
-                "<strong>Recommendations could not be loaded automatically.</strong> "
-                +
-                "Make sure the file exists at: "
-                +
-                CSV_PATH;
 
         console.error(error);
+
+
+
+        /* IMPORTANT:
+           DO NOT LEAVE PAGE SAYING "LOADING..."
+        */
+
+
+        document
+            .getElementById(
+                "recommendationCount"
+            )
+            .textContent =
+                "CSV not found";
+
+
+        document
+            .getElementById(
+                "topScore"
+            )
+            .textContent =
+                "—";
+
+
+        const status =
+            document.getElementById(
+                "csvStatus"
+            );
+
+
+        status.innerHTML =
+
+            "<strong>Recommendation CSV could not be loaded.</strong><br><br>"
+
+            +
+
+            "The website is currently looking for:<br>"
+
+            +
+
+            "<code>"
+            +
+            CSV_PATH
+            +
+            "</code><br><br>"
+
+            +
+
+            "Check your GitHub repository and change the "
+            +
+            "<strong>CSV_PATH</strong> line if your actual filename "
+            +
+            "or folder is different.";
+
+
+        status.className =
+            "status error";
 
     }
 
 }
 
 
-/* ==========================================
+
+/* =====================================================
    RENDER TABLE
-========================================== */
+===================================================== */
+
 
 function renderTable(data) {
+
 
     const body =
         document.getElementById(
             "recommendationBody"
         );
 
+
     body.innerHTML = "";
 
+
     data.forEach(
+
         function(row, index) {
 
+
             const contentID =
+
                 getValue(
                     row,
                     [
@@ -1732,11 +2283,15 @@ function renderTable(data) {
                         "content"
                     ]
                 )
+
                 ||
+
                 "content_" + (index + 1);
 
 
+
             const action =
+
                 getValue(
                     row,
                     [
@@ -1744,11 +2299,15 @@ function renderTable(data) {
                         "recommended_action"
                     ]
                 )
+
                 ||
+
                 "REVIEW";
 
 
+
             const score =
+
                 getValue(
                     row,
                     [
@@ -1759,7 +2318,9 @@ function renderTable(data) {
                 );
 
 
+
             const reason =
+
                 getValue(
                     row,
                     [
@@ -1768,23 +2329,33 @@ function renderTable(data) {
                         "reason_codes"
                     ]
                 )
+
                 ||
+
                 "MULTI_SIGNAL";
 
 
+
             const rank =
+
                 getValue(
                     row,
                     [
                         "rank"
                     ]
                 )
+
                 ||
+
                 index + 1;
 
 
+
             const tr =
-                document.createElement("tr");
+                document.createElement(
+                    "tr"
+                );
+
 
 
             let badgeClass =
@@ -1792,9 +2363,11 @@ function renderTable(data) {
 
 
             if (
+
                 action
                 .toUpperCase()
                 .includes("REVIEW")
+
             ) {
 
                 badgeClass =
@@ -1802,10 +2375,13 @@ function renderTable(data) {
 
             }
 
+
             else if (
+
                 action
                 .toUpperCase()
                 .includes("MONITOR")
+
             ) {
 
                 badgeClass =
@@ -1814,20 +2390,48 @@ function renderTable(data) {
             }
 
 
+
+            let displayScore =
+                "—";
+
+
+            if (
+                score !== ""
+                &&
+                !isNaN(Number(score))
+            ) {
+
+                displayScore =
+                    Number(score)
+                    .toFixed(3);
+
+            }
+
+
+
             tr.innerHTML =
+
                 `
-                <td>${rank}</td>
-
-                <td>${contentID}</td>
-
                 <td>
-                    <span class="badge ${badgeClass}">
-                        ${action}
-                    </span>
+                    ${rank}
                 </td>
 
                 <td>
-                    ${Number(score).toFixed(3)}
+                    ${contentID}
+                </td>
+
+                <td>
+
+                    <span class="badge ${badgeClass}">
+
+                        ${action}
+
+                    </span>
+
+                </td>
+
+                <td>
+                    ${displayScore}
                 </td>
 
                 <td>
@@ -1836,19 +2440,25 @@ function renderTable(data) {
                 `;
 
 
-            body.appendChild(tr);
+            body.appendChild(
+                tr
+            );
 
         }
+
     );
 
 }
 
 
-/* ==========================================
-   POPULATE FILTERS
-========================================== */
+
+/* =====================================================
+   POPULATE FILTER OPTIONS
+===================================================== */
+
 
 function populateFilters() {
+
 
     const actionFilter =
         document.getElementById(
@@ -1862,11 +2472,17 @@ function populateFilters() {
         );
 
 
+
     const actions =
+
         [
+
             ...new Set(
+
                 recommendationData.map(
+
                     row =>
+
                         getValue(
                             row,
                             [
@@ -1874,17 +2490,27 @@ function populateFilters() {
                                 "recommended_action"
                             ]
                         )
+
                 )
+
             )
+
         ]
+
         .filter(Boolean);
 
 
+
     const reasons =
+
         [
+
             ...new Set(
+
                 recommendationData.map(
+
                     row =>
+
                         getValue(
                             row,
                             [
@@ -1893,65 +2519,87 @@ function populateFilters() {
                                 "reason_codes"
                             ]
                         )
+
                 )
+
             )
+
         ]
+
         .filter(Boolean);
 
 
+
     actions.forEach(
+
         function(action) {
+
 
             const option =
                 document.createElement(
                     "option"
                 );
 
+
             option.value =
                 action;
 
+
             option.textContent =
                 action;
+
 
             actionFilter.appendChild(
                 option
             );
 
         }
+
     );
 
 
+
     reasons.forEach(
+
         function(reason) {
+
 
             const option =
                 document.createElement(
                     "option"
                 );
 
+
             option.value =
                 reason;
 
+
             option.textContent =
                 reason;
+
 
             reasonFilter.appendChild(
                 option
             );
 
         }
+
     );
 
 }
 
 
-/* ==========================================
+
+/* =====================================================
    FILTER TABLE
-========================================== */
+===================================================== */
+
 
 function filterTable() {
 
+
     const search =
+
         document
         .getElementById(
             "searchInput"
@@ -1960,7 +2608,9 @@ function filterTable() {
         .toLowerCase();
 
 
-    const action =
+
+    const selectedAction =
+
         document
         .getElementById(
             "actionFilter"
@@ -1969,7 +2619,9 @@ function filterTable() {
         .toLowerCase();
 
 
-    const reason =
+
+    const selectedReason =
+
         document
         .getElementById(
             "reasonFilter"
@@ -1978,11 +2630,16 @@ function filterTable() {
         .toLowerCase();
 
 
+
     const filtered =
+
         recommendationData.filter(
+
             function(row) {
 
+
                 const contentID =
+
                     getValue(
                         row,
                         [
@@ -1993,7 +2650,9 @@ function filterTable() {
                     .toLowerCase();
 
 
-                const rowAction =
+
+                const action =
+
                     getValue(
                         row,
                         [
@@ -2004,7 +2663,9 @@ function filterTable() {
                     .toLowerCase();
 
 
-                const rowReason =
+
+                const reason =
+
                     getValue(
                         row,
                         [
@@ -2016,32 +2677,51 @@ function filterTable() {
                     .toLowerCase();
 
 
+
                 const searchMatch =
+
                     contentID.includes(
                         search
                     );
 
 
+
                 const actionMatch =
-                    action === ""
+
+                    selectedAction === ""
+
                     ||
-                    rowAction === action;
+
+                    action ===
+                    selectedAction;
+
 
 
                 const reasonMatch =
-                    reason === ""
+
+                    selectedReason === ""
+
                     ||
-                    rowReason === reason;
+
+                    reason ===
+                    selectedReason;
+
 
 
                 return
+
                     searchMatch
+
                     &&
+
                     actionMatch
+
                     &&
+
                     reasonMatch;
 
             }
+
         );
 
 
@@ -2052,17 +2732,14 @@ function filterTable() {
 }
 
 
-/* ==========================================
+
+/* =====================================================
    SORT TABLE
-========================================== */
-
-let ascending =
-    true;
+===================================================== */
 
 
-function sortTable(
-    columnIndex
-) {
+function sortTable(columnIndex) {
+
 
     const table =
         document.getElementById(
@@ -2080,10 +2757,14 @@ function sortTable(
         );
 
 
+
     rows.sort(
+
         function(a, b) {
 
+
             const A =
+
                 a.cells[
                     columnIndex
                 ]
@@ -2091,7 +2772,9 @@ function sortTable(
                 .trim();
 
 
+
             const B =
+
                 b.cells[
                     columnIndex
                 ]
@@ -2099,26 +2782,37 @@ function sortTable(
                 .trim();
 
 
+
             const numberA =
                 Number(A);
+
 
             const numberB =
                 Number(B);
 
 
+
             let comparison;
 
 
+
             if (
+
                 !isNaN(numberA)
+
                 &&
+
                 !isNaN(numberB)
+
             ) {
 
                 comparison =
-                    numberA - numberB;
+                    numberA
+                    -
+                    numberB;
 
             }
+
 
             else {
 
@@ -2128,35 +2822,49 @@ function sortTable(
             }
 
 
+
             return ascending
+
                 ?
+
                 comparison
+
                 :
+
                 -comparison;
 
         }
+
     );
+
 
 
     ascending =
         !ascending;
 
 
+
     rows.forEach(
+
         row =>
+
             tbody.appendChild(
                 row
             )
+
     );
 
 }
 
 
-/* ==========================================
-   SUMMARY
-========================================== */
+
+/* =====================================================
+   UPDATE SUMMARY NUMBERS
+===================================================== */
+
 
 function updateSummary() {
+
 
     document
         .getElementById(
@@ -2166,11 +2874,17 @@ function updateSummary() {
             recommendationData.length;
 
 
+
     const scores =
+
         recommendationData
+
         .map(
+
             row =>
+
                 Number(
+
                     getValue(
                         row,
                         [
@@ -2179,23 +2893,31 @@ function updateSummary() {
                             "priority_score"
                         ]
                     )
+
                 )
+
         )
+
         .filter(
+
             score =>
                 !isNaN(score)
+
         );
+
 
 
     if (
         scores.length > 0
     ) {
 
+
         document
             .getElementById(
                 "topScore"
             )
             .textContent =
+
                 Math.max(
                     ...scores
                 )
@@ -2203,25 +2925,57 @@ function updateSummary() {
 
     }
 
+
+    else {
+
+
+        document
+            .getElementById(
+                "topScore"
+            )
+            .textContent =
+                "—";
+
+    }
+
 }
 
 
-/* ==========================================
-   CREATE CHARTS
-========================================== */
+
+/* =====================================================
+   CREATE INTERACTIVE CHARTS
+===================================================== */
+
 
 function createCharts() {
 
+
+    if (
+        recommendationData.length === 0
+    ) {
+
+        return;
+
+    }
+
+
+
     const topTen =
+
         recommendationData
         .slice(0, 10);
 
 
+
     const labels =
+
         topTen.map(
+
             function(row, index) {
 
+
                 return (
+
                     getValue(
                         row,
                         [
@@ -2229,23 +2983,37 @@ function createCharts() {
                             "content"
                         ]
                     )
+
                     ||
+
                     "Item " + (index + 1)
+
                 )
+
                 .replace(
                     "content_",
                     ""
                 )
-                .slice(0, 12);
+
+                .slice(
+                    0,
+                    14
+                );
 
             }
+
         );
 
 
+
     const scores =
+
         topTen.map(
+
             row =>
+
                 Number(
+
                     getValue(
                         row,
                         [
@@ -2254,11 +3022,18 @@ function createCharts() {
                             "priority_score"
                         ]
                     )
+
                 )
+
         );
 
 
+
+    /* TOP 10 BAR CHART */
+
+
     const context1 =
+
         document
         .getElementById(
             "scoreChart"
@@ -2266,17 +3041,23 @@ function createCharts() {
         .getContext("2d");
 
 
+
     scoreChart =
+
         new Chart(
+
             context1,
+
             {
 
                 type: "bar",
+
 
                 data: {
 
                     labels:
                         labels,
+
 
                     datasets: [
 
@@ -2297,13 +3078,16 @@ function createCharts() {
 
                 },
 
+
                 options: {
 
                     responsive:
                         true,
 
+
                     maintainAspectRatio:
                         false,
+
 
                     plugins: {
 
@@ -2314,17 +3098,19 @@ function createCharts() {
 
                         },
 
+
                         title: {
 
                             display:
                                 true,
 
                             text:
-                                "Top 10 Content Review Priorities"
+                                "Top 10 Content Refresh Priorities"
 
                         }
 
                     },
+
 
                     scales: {
 
@@ -2350,10 +3136,16 @@ function createCharts() {
                 }
 
             }
+
         );
 
 
+
+    /* TOP PRIORITY LINE CHART */
+
+
     const context2 =
+
         document
         .getElementById(
             "topRecommendationChart"
@@ -2361,24 +3153,30 @@ function createCharts() {
         .getContext("2d");
 
 
+
     topRecommendationChart =
+
         new Chart(
+
             context2,
+
             {
 
                 type: "line",
+
 
                 data: {
 
                     labels:
                         labels,
 
+
                     datasets: [
 
                         {
 
                             label:
-                                "Priority Trend",
+                                "Priority Score",
 
                             data:
                                 scores,
@@ -2395,13 +3193,16 @@ function createCharts() {
 
                 },
 
+
                 options: {
 
                     responsive:
                         true,
 
+
                     maintainAspectRatio:
                         false,
+
 
                     plugins: {
 
@@ -2417,6 +3218,7 @@ function createCharts() {
 
                     },
 
+
                     scales: {
 
                         y: {
@@ -2431,19 +3233,24 @@ function createCharts() {
                 }
 
             }
+
         );
 
 }
 
 
-/* ==========================================
-   START
-========================================== */
+
+/* =====================================================
+   START WEBSITE
+===================================================== */
+
 
 loadRecommendations();
+
 
 </script>
 
 
 </body>
+
 </html>
